@@ -9,9 +9,10 @@ from data.edge_server import EdgeServer
 from utils import DataUtils
 
 
-
 class ServerPlacer(object):
-    def __init__(self, base_stations: List[BaseStation], distances: List[List[float]]):
+
+    def __init__(self, base_stations: List[BaseStation],
+                 distances: List[List[float]]):
         self.base_stations = base_stations.copy()
         self.edge_servers = None
         self.distances = distances
@@ -19,7 +20,8 @@ class ServerPlacer(object):
     def place_server(self, base_station_num, edge_server_num):
         raise NotImplementedError
 
-    def _distance_edge_server_base_station(self, edge_server: EdgeServer, base_station: BaseStation) -> float:
+    def _distance_edge_server_base_station(self, edge_server: EdgeServer,
+                                           base_station: BaseStation) -> float:
         """
         Calculate distance between given edge server and base station
         
@@ -27,14 +29,23 @@ class ServerPlacer(object):
         :param base_station: 
         :return: distance(km)
         """
-        if edge_server.base_station_id:
-            return self.distances[edge_server.base_station_id][base_station.id]
-        return DataUtils.calc_distance(edge_server.latitude, edge_server.longitude, base_station.latitude,
-                                       base_station.longitude)
+
+        def get_base_station_id(latitude, longitude):
+            for base_station in DataUtils.g_base_stations:
+                if abs(base_station.latitude -
+                       latitude) < 0.001 and abs(base_station.longitude -
+                                                 longitude) < 0.001:
+                    return base_station.id
+            return None
+
+        if not edge_server.base_station_id:
+            edge_server.base_station_id = get_base_station_id(
+                edge_server.latitude, edge_server.longitude)
+        return self.distances[edge_server.base_station_id][base_station.id]
 
     def compute_objectives(self):
         objectives = {
-            'latency': self.objective_latency(), 
+            'latency': self.objective_latency(),
             'workload': self.objective_workload()
         }
         return objectives
@@ -49,7 +60,8 @@ class ServerPlacer(object):
         for es in self.edge_servers:
             for bs in es.assigned_base_stations:
                 delay = self._distance_edge_server_base_station(es, bs)
-                logging.debug("base station={0}  delay={1}".format(bs.id, delay))
+                logging.debug("base station={0}  delay={1}".format(
+                    bs.id, delay))
                 total_delay += delay
                 base_station_num += 1
         return total_delay / base_station_num

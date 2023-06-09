@@ -29,9 +29,21 @@ class KMeansServerPlacer(ServerPlacer):
         kmeans = KMeans(n_clusters=k, random_state=0, max_iter=100).fit(data)
         centroid = kmeans.cluster_centers_
         label = kmeans.labels_
-
         # process result
         edge_servers = [EdgeServer(i, row[0], row[1]) for i, row in enumerate(centroid)]
+        # 使最近的基站为部署点
+        for es in edge_servers:
+            min_dist = float('inf')
+            min_bs = None
+            for bs in base_stations:
+                dist = np.linalg.norm(np.array([es.latitude, es.longitude]) - np.array([bs.latitude, bs.longitude]))
+                if dist < min_dist:
+                    min_dist = dist
+                    min_bs = bs
+            es.latitude = min_bs.latitude
+            es.longitude = min_bs.longitude
+            es.base_station_id = min_bs.id
+            
         for bs, es in enumerate(label):
             edge_servers[es].assigned_base_stations.append(base_stations[bs])
             edge_servers[es].workload += base_stations[bs].workload

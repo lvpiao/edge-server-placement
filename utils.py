@@ -53,10 +53,14 @@ def memorize(filename):
 
 
 class DataUtils(object):
+    g_distances = None
+    g_base_stations = None
     def __init__(self, location_file, user_info_file):
         self.base_stations = self.base_station_reader(location_file)
         self.base_stations = self.user_info_reader(user_info_file)
         self.distances = self.distance_between_stations()
+        DataUtils.g_distances = self.distances
+        DataUtils.g_base_stations = self.base_stations
 
     @memorize('cache/base_stations')
     def base_station_reader(self, path: str):
@@ -129,6 +133,16 @@ class DataUtils(object):
             for j, station_b in enumerate(base_stations):
                 dist = DataUtils.calc_distance(station_a.latitude, station_a.longitude, station_b.latitude,
                                                station_b.longitude)
-                distances[i].append(dist)
+                if dist <= 1:
+                   distances[i].append(dist)
+                else:
+                   distances[i].append(float('inf'))
             logging.debug("Calculated distance from {0} to other base stations".format(str(station_a)))
+        # 已知邻接矩阵distances，求无向图中任意两点之间的距离
+        # Floyd算法
+        for k in range(len(distances)):
+            for i in range(len(distances)):
+                for j in range(len(distances)):
+                    if distances[i][j] > distances[i][k] + distances[k][j]:
+                        distances[i][j] = distances[i][k] + distances[k][j]
         return distances

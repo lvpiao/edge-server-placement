@@ -8,6 +8,7 @@ from algo.mlp import *
 from algo.random import *
 from algo.weighted_kmeans import *
 from algo.topk import *
+from algo.sdts import *
 from utils import *
 
 
@@ -42,6 +43,7 @@ def run(placers, results_fpath='results/results.csv'):
             record = {**settings, **objectives}
             records.append(record)
     pd_records = pd.DataFrame(records)
+    # geng
     pd_records.to_csv(results_fpath)
 
 
@@ -53,5 +55,7 @@ if __name__ == '__main__':
     placers['K-means'] = KMeansServerPlacer(data.base_stations, data.distances)
     placers['Top-K'] = TopKServerPlacer(data.base_stations, data.distances)
     placers['Random'] = RandomServerPlacer(data.base_stations, data.distances)
-    placers['weighted_k_means'] = WeightedKMeansServerPlacer(data.base_stations, data.distances)
+    # placers['weighted_k_means'] = WeightedKMeansServerPlacer(data.base_stations, data.distances)
+
+    placers['SDTS'] = SDTSServerPlacer(data.base_stations, data.distances)
     run(placers)
