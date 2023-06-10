@@ -14,7 +14,8 @@ import numba
 import numpy as np
 import multiprocessing
 
-NO_LINK = 1000000000
+# 上海市区直接大致直径：100KM
+NO_LINK = 100
 
 
 def memorize(filename):

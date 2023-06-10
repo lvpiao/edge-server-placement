@@ -60,29 +60,25 @@ class ServerPlacer(object):
         for es in self.edge_servers:
             for bs in es.assigned_base_stations:
                 delay = self._distance_edge_server_base_station(es, bs)
-                if NO_LINK == delay:
-                    # 则该基站划入可达且负载最小服务器
-                    arriveable_es = []
-                    for es in self.edge_servers:
-                        dist = self._distance_edge_server_base_station(es, bs)
-                        if dist != NO_LINK:
-                            arriveable_es.append(es)
-                    min_es = None
-                    min_load = float('inf')
-                    for es in arriveable_es:
-                        if es.workload < min_load:
-                            min_load = es.workload
-                            min_es = es
-                            min_dist = self._distance_edge_server_base_station(
-                                es, bs)
-                    if min_es:
-                        delay = min_dist
-                        min_es.workload += bs.workload
-                        es.workload -= bs.workload
-                    else:
-                        delay = 66
-                logging.debug("base station={0}  delay={1}".format(
-                    bs.id, delay))
+                # if NO_LINK == delay:
+                #     # 则该基站划入可达且负载最小服务器
+                #     arriveable_es = []
+                #     for es in self.edge_servers:
+                #         dist = self._distance_edge_server_base_station(es, bs)
+                #         if dist != NO_LINK:
+                #             arriveable_es.append(es)
+                #     min_es = None
+                #     min_load = float('inf')
+                #     for es in arriveable_es:
+                #         if es.workload < min_load:
+                #             min_load = es.workload
+                #             min_es = es
+                #             min_dist = self._distance_edge_server_base_station(
+                #                 es, bs)
+                #     if min_es:
+                #         delay = min_dist
+                #         min_es.workload += bs.workload
+                #         es.workload -= bs.workload
                 total_delay += delay
                 base_station_num += 1
 
