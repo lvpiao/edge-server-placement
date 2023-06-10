@@ -22,6 +22,7 @@ class TopKServerPlacer(ServerPlacer):
         sorted_base_stations = sorted(base_stations, key=lambda x: x.workload, reverse=True)
         edge_servers = [EdgeServer(i, item.latitude, item.longitude, item.id) for i, item in
                         enumerate(sorted_base_stations[:edge_server_num])]
+        self.edge_servers = edge_servers
         for i, base_station in enumerate(sorted_base_stations):
             closest_edge_server = None
             min_distance = 1e10

@@ -19,6 +19,7 @@ class RandomServerPlacer(ServerPlacer):
         random_base_stations = random.sample(self.base_stations, edge_server_num)
         edge_servers = [EdgeServer(i, item.latitude, item.longitude, item.id) for i, item in
                         enumerate(random_base_stations)]
+        self.edge_servers = edge_servers
         for i, base_station in enumerate(base_stations):
             closest_edge_server = None
             min_distance = 1e10

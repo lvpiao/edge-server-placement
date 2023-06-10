@@ -26,7 +26,7 @@ class KMeansServerPlacer(ServerPlacer):
         k = edge_server_num
 
         # k-means
-        kmeans = KMeans(n_clusters=k, random_state=0, max_iter=100).fit(data)
+        kmeans = KMeans(n_clusters=k, max_iter=30).fit(data)
         centroid = kmeans.cluster_centers_
         label = kmeans.labels_
         # process result
