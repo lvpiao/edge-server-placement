@@ -36,7 +36,7 @@ class SDTSServerPlacer(ServerPlacer):
         label = dbscan.fit_predict(data)
         # 簇的个数
         print("clust_cnt", len(set(label)))
-        edge_server_num += len(set(label))
+        # edge_server_num += len(set(label))
         # 获取所有标签的噪声的列表
         Noise = data[label == -1]
         # 对R中的数据按照标签进行分类
@@ -46,17 +46,17 @@ class SDTSServerPlacer(ServerPlacer):
         apha = edge_server_num / valid_bs_cnt
 
         # 噪声点数量
-        # print("Noise Cnt", len(Noise))
-        # R_new = []
-        # for Ri in R:
-        #     bs_cnt = len(Ri)
-        #     svr_cnt = bs_cnt * apha
-        #     if svr_cnt < 1:
-        #         Noise = np.concatenate((Noise, Ri), axis=0)
-        #     else:
-        #         R_new.append(Ri)
-        # R = R_new
-        # print("R_new Cnt", len(R_new))
+        print("Noise Cnt", len(Noise))
+        R_new = []
+        for Ri in R:
+            bs_cnt = len(Ri)
+            svr_cnt = bs_cnt * apha
+            if svr_cnt < 1:
+                Noise = np.concatenate((Noise, Ri), axis=0)
+            else:
+                R_new.append(Ri)
+        R = R_new
+        print("R_new Cnt", len(R_new))
 
         # 将所有噪声加入离它最近的簇中
         for noise in Noise:
@@ -102,13 +102,13 @@ class SDTSServerPlacer(ServerPlacer):
             return min_bs
 
         # 对R按照元素数量排序
-        R.sort(key=lambda x: -len(x))
+        R.sort(key=lambda x: len(x))
         for idx, Ri in enumerate(R):
             if len(Ri) == 0:
                 continue
             svr_cnt = np.ceil(len(Ri) * edge_server_num / base_station_num)
-            # if idx + 1 == len(R):
-            #     svr_cnt = edge_server_num - used_svr_cnt
+            if idx + 1 == len(R):
+                svr_cnt = edge_server_num - used_svr_cnt
             # KMedoides聚类
             kmeans = KMeans(n_clusters=int(svr_cnt + 0.1)).fit(Ri)
             centers = kmeans.cluster_centers_

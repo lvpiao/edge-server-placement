@@ -43,7 +43,7 @@ def task(args):
         'num_edge_servers': k,
         'placer_name': name
     }
-    objectives = run_with_settings(placer, n, k, 5)
+    objectives = run_with_settings(placer, n, k, 1)
     record = {**settings, **objectives}
     return record
 
@@ -52,10 +52,9 @@ import copy
 
 
 def run(placers, results_fpath='results/results.csv'):
-    n = 3000
     # create a list of arguments for each task using list comprehension
-    args_list = [(name, copy.deepcopy(placer), 3000, k)
-                 for k in range(100, 600, 100)
+    args_list = [(name, copy.deepcopy(placer), k, 300)
+                 for k in range(300, 3100, 300)
                  for name, placer in placers.items()]
 
     # cpu cores
@@ -71,7 +70,7 @@ def run(placers, results_fpath='results/results.csv'):
 
     pd_records = pd.DataFrame(records)
     # 根据placer_name和num_edge_servers排序
-    # pd_records = pd_records.sort_values(by=['placer_name', 'num_edge_servers'])
+    pd_records = pd_records.sort_values(by=['placer_name', 'num_edge_servers']).T
     pd_records.to_csv(results_fpath)
 
 

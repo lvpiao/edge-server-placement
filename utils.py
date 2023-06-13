@@ -14,8 +14,8 @@ import numba
 import numpy as np
 import multiprocessing
 
-# 上海市区直接大致直径：100KM
-NO_LINK = 100
+# 上海市区直接大致半径：50KM
+NO_LINK = 25
 
 
 def memorize(filename):
@@ -102,7 +102,6 @@ class DataUtils(object):
         :return: List of BaseStations with user info
         """
         self.address_to_id = {bs.address: bs.id for bs in self.base_stations}
-
         req_data = pd.read_csv(path, header=0, index_col=0)
         req_data['start time'] = pd.to_datetime(req_data['start time'])
         req_data['end time'] = pd.to_datetime(req_data['end time'])
