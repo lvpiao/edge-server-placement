@@ -53,8 +53,8 @@ import copy
 
 def run(placers, results_fpath='results/results.csv'):
     # create a list of arguments for each task using list comprehension
-    args_list = [(name, copy.deepcopy(placer), k, 300)
-                 for k in range(300, 3100, 300)
+    args_list = [(name, copy.deepcopy(placer), 3000, k)
+                 for k in range(100, 600, 100)
                  for name, placer in placers.items()]
 
     # cpu cores
